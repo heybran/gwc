@@ -39,21 +39,39 @@ function convertToTagReadyString(str) {
    * need to make sure it has another uppercase letter,
    * so we can generator custom element HTML tag.
    */
-  if (startsWithUppercase(str)) {
-    const firstLetter = str.charAt(0);
-    let copy = str.substring(1);
+  str = str.replace(/[A-Z]/g, (match) => {
+    return '-' + match;
+  });
 
-    if (!includesUppercase(copy)) {
-      console.log(`It seems like your filename only includes one uppercase? \nPlease try format like this "MyComponent".`);
-      process.exit(1);
-    }
-
-    copy = copy.replace(/[A-Z]/g, (match) => {
-      return '-' + match;
-    });
-
-    return (firstLetter + copy).toLowerCase();
+  if (str.startsWith('-')) {
+    str = str.str.substring(1);
   }
+
+  return str.toLowerCase();
+
+  // if (startsWithUppercase(str)) {
+  //   const firstLetter = str.charAt(0);
+  //   let copy = str.substring(1);
+
+  //   if (!includesUppercase(copy)) {
+  //     console.log(`It seems like your filename only includes one uppercase? \nPlease try format like this "MyComponent".`);
+  //     process.exit(1);
+  //   }
+
+  //   copy = copy.replace(/[A-Z]/g, (match) => {
+  //     return '-' + match;
+  //   });
+
+  //   return (firstLetter + copy).toLowerCase();
+
+  // } else {
+  //   let copy = str;
+  //   copy = copy.replace(/[A-Z]/g, (match) => {
+  //     return '-' + match;
+  //   });
+
+  //   return copy.toLowerCase();
+  // }
 }
 
 module.exports = async function generateWebComponent(name, destination) {
@@ -79,10 +97,15 @@ module.exports = async function generateWebComponent(name, destination) {
         filename = name;
       }
 
+      console.log(filename)
       const tagName = convertToTagReadyString(filename);
 
+      console.log(tagName)
+
+      const componentName = filename.includes('-') ? filename.replace('-', '_') : filename;
+
       // Replace class name and custom element name
-      data = data.replace(/ExampleComponent/g, filename).replace(/example-component/g, tagName);
+      data = data.replace(/ExampleComponent/g, componentName).replace(/example-component/g, tagName);
 
       // If destination folder entered is "./components/", get rid of the last "/".
       destination = destination.endsWith('/') ? destination.slice(0, -1) : destination;
