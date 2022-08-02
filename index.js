@@ -2,7 +2,7 @@
 
 /**
  * generate-web-components
- * Generator Web Components Boilderplate File.
+ * Generator Web Components Boilerplate File.
  *
  * @author Brandon Zhang <https://brandonzhang.cn>
  */
@@ -14,13 +14,11 @@ const generateWebComponent = require('./utils/generateWebComponent');
 
 const input = cli.input;
 const flags = cli.flags;
-const { clear, debug } = flags;
+const { clear } = flags;
 
 (async () => {
 	init({ clear });
 	input.includes(`help`) && cli.showHelp(0);
 
 	flags.name && flags.destination && (await generateWebComponent(flags.name, flags.destination));
-
-	debug && log(flags);
 })();

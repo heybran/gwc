@@ -13,18 +13,12 @@ const flags = {
 		default: false,
 		desc: `Don't clear the console`
 	},
-	debug: {
-		type: `boolean`,
-		default: false,
-		alias: `d`,
-		desc: `Print debug info`
-	},
 	version: {
 		type: `boolean`,
 		alias: `v`,
 		desc: `Print CLI version`
 	},
-	// my custom flag
+	// custom flags
 	name: {
 		type: 'string',
 		default: 'ExampleComponent.js',

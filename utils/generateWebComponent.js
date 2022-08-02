@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 function startsWithUppercase(str) {
-  let regex = /[A-Z]/;
-  return regex.test(str.charAt(0));
+  return /[A-Z]/.test(str.charAt(0));
 }
 
 function includesUppercase(str) {
@@ -15,33 +14,41 @@ function includesDashOrUnderscore(str) {
 }
  
 function convertToTagReadyString(str) {
-  // e.g. mycomponent
+  /**
+   * If name being passed in is all lower-cased,
+   * and doesn't include "-" or "_", 
+   * like "mycomponent" or "mycomponent.js",
+   * terminate the program as there is no way to
+   * generator custom element HTML tag. 
+   */
   if (!includesUppercase(str) && !includesDashOrUnderscore(str)) {
-    console.log('Filename is not correct');
+    console.log('Filename is not correct, please try format like "myComponent.js", "MyComponent.js", "my-component.js", or "my_component.js".');
     process.exit(1);
   }
-  const array = [];
 
+  /**
+   * Convert "my-component" to "my_component",
+   * as "my-component" is not a valid class name.
+   */
   if (includesDashOrUnderscore(str)) {
     return str.split(/-|_/).join('-').toLowerCase();
   }
 
-  for (let i = 0; i < str.length; i++ ) {
-    if (/[A-Z]/.test(str.charAt(i))) {
-      array.push(str[i]);
-    }
-  }
-
+  /**
+   * If name starts with uppercase like "Mycomponent",
+   * need to make sure it has another uppercase letter,
+   * so we can generator custom element HTML tag.
+   */
   if (startsWithUppercase(str)) {
     const firstLetter = str.charAt(0);
     let copy = str.substring(1);
-    console.log(copy, str);
+
     if (!includesUppercase(copy)) {
       console.log(`It seems like your filename only includes one uppercase? \nPlease try format like this "MyComponent".`);
       process.exit(1);
     }
 
-    copy = copy.replace(/[A-Z]/g, (match, variable) => {
+    copy = copy.replace(/[A-Z]/g, (match) => {
       return '-' + match;
     });
 
@@ -51,6 +58,7 @@ function convertToTagReadyString(str) {
 
 module.exports = async function generateWebComponent(name, destination) {
   fs.readFile(
+    // Read web component source template
     path.join(__dirname, '../templates', 'ExampleComponent.js'),
     'utf-8',
     (err, data) => {
@@ -63,32 +71,28 @@ module.exports = async function generateWebComponent(name, destination) {
         });
       }
 
-      let componentTag;
-      // Replace component name inside data with name being passed in
-      // Possible Name Patterns
-      // 1: MyComponent.js
-      if (name.includes('.')) { // 输入MyComponent.js
-        filename = name.split('.')[0];
-        if (startsWithUppercase(filename)) {
-          console.log('yes');
-        }
+      let filename;
 
-        const tagName = convertToTagReadyString(filename);
-        console.log(tagName);
+      if (name.includes('.')) { 
+        filename = name.split('.')[0]; // MyComponent.js => MyComponent
+      } else {
+        filename = name;
       }
-      // 2: MyComponent
-      // 3: myComponent.js
-      // 4: myComponent
-      // 5: my-component.js
-      // 6: my-component
-      // 7: my_component.js
-      // 8: my_component
-      // 9: mycomponent.js // should defend this one
-      // 10: MyShinyComponent
+
+      const tagName = convertToTagReadyString(filename);
+
+      // Replace class name and custom element name
+      data = data.replace(/ExampleComponent/g, filename).replace(/example-component/g, tagName);
+
+      // If destination folder entered is "./components/", get rid of the last "/".
+      destination = destination.endsWith('/') ? destination.slice(0, -1) : destination;
+
+      // If name entered didn't contain ".js", add that part
+      name = name.includes('.') ? name : (name + '.js');
 
       fs.writeFile(`${destination}/${name}`, data, err => {
         if (err) throw err;
-        console.log('Your new shiny component is generated!')
+        console.log(`Your new shiny component ${name} is created inside ${destination}!`);
       });
   });
 }
