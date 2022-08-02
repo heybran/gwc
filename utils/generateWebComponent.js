@@ -44,7 +44,7 @@ function convertToTagReadyString(str) {
   });
 
   if (str.startsWith('-')) {
-    str = str.str.substring(1);
+    str = str.substring(1);
   }
 
   return str.toLowerCase();
