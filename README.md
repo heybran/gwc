@@ -2,8 +2,19 @@
 
 ## Installation
 
+1. Clone the repository to your local machine
 ```bash
 git clone https://github.com/iambran/gwc.git
+```
+
+2. Install Node dependencies
+```bash
+npm install
+```
+
+3. Run npm link
+```bash
+npm link
 ```
 
 ## How it works?
