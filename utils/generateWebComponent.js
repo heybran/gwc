@@ -48,30 +48,6 @@ function convertToTagReadyString(str) {
   }
 
   return str.toLowerCase();
-
-  // if (startsWithUppercase(str)) {
-  //   const firstLetter = str.charAt(0);
-  //   let copy = str.substring(1);
-
-  //   if (!includesUppercase(copy)) {
-  //     console.log(`It seems like your filename only includes one uppercase? \nPlease try format like this "MyComponent".`);
-  //     process.exit(1);
-  //   }
-
-  //   copy = copy.replace(/[A-Z]/g, (match) => {
-  //     return '-' + match;
-  //   });
-
-  //   return (firstLetter + copy).toLowerCase();
-
-  // } else {
-  //   let copy = str;
-  //   copy = copy.replace(/[A-Z]/g, (match) => {
-  //     return '-' + match;
-  //   });
-
-  //   return copy.toLowerCase();
-  // }
 }
 
 module.exports = async function generateWebComponent(name, destination) {
