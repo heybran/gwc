@@ -16,7 +16,7 @@ export default class ExampleComponent extends HTMLElement {
 
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name, oldValue, newValue) {
 
   }
 }
